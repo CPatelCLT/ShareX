@@ -43,6 +43,8 @@ namespace ShareX.UploadersLib
         Chevereto,
         [Description("vgy.me")]
         Vgyme,
+        [Description("Immich")]
+        Immich,
         CustomImageUploader, // Localized
         FileUploader // Localized
     }

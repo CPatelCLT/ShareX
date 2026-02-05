@@ -83,6 +83,15 @@ namespace ShareX.UploadersLib
 
         #endregion vgy.me
 
+        #region Immich
+
+        [JsonEncrypt]
+        public string ImmichApiKey { get; set; } = "";
+        public string ImmichBaseUrl { get; set; } = "";
+        public bool ImmichCreateShareLink { get; set; } = false;
+
+        #endregion Immich
+
         #endregion Image uploaders
 
         #region Text uploaders
