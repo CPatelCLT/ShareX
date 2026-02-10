@@ -88,7 +88,9 @@ namespace ShareX.UploadersLib
         [JsonEncrypt]
         public string ImmichApiKey { get; set; } = "";
         public string ImmichBaseUrl { get; set; } = "";
-        public bool ImmichCreateShareLink { get; set; } = false;
+        public bool ImmichDirectURL { get; set; } = true;
+        public bool ImmichUseAlbum { get; set; } = false;
+        public string ImmichAlbum { get; set; } = "";
 
         #endregion Immich
 

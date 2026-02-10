@@ -530,6 +530,13 @@ namespace ShareX.UploadersLib
             btnImgurRefreshAlbumList = new System.Windows.Forms.Button();
             cbImgurThumbnailType = new System.Windows.Forms.ComboBox();
             lblImgurThumbnailType = new System.Windows.Forms.Label();
+            tpImmich = new System.Windows.Forms.TabPage();
+            lblImmichURLGuide = new System.Windows.Forms.Label();
+            cbImmichDirectURL = new System.Windows.Forms.CheckBox();
+            lblImmichURL = new System.Windows.Forms.Label();
+            txtImmichURL = new System.Windows.Forms.TextBox();
+            txtImmichAPIKey = new System.Windows.Forms.TextBox();
+            lblImmichAPIKey = new System.Windows.Forms.Label();
             tpImageShack = new System.Windows.Forms.TabPage();
             btnImageShackLogin = new System.Windows.Forms.Button();
             btnImageShackOpenPublicProfile = new System.Windows.Forms.Button();
@@ -575,6 +582,19 @@ namespace ShareX.UploadersLib
             tcUploaders = new System.Windows.Forms.TabControl();
             tttvMain = new ShareX.HelpersLib.TabToTreeView();
             actRapidShareAccountType = new AccountTypeControl();
+            lblImmichAlbum = new System.Windows.Forms.Label();
+            cbImmichAlbum = new System.Windows.Forms.ComboBox();
+            cbImmichUseAlbum = new System.Windows.Forms.CheckBox();
+            btnImmichAPITest = new System.Windows.Forms.Button();
+            btnImmichLoadAlbums = new System.Windows.Forms.Button();
+            lblImmichAPITest = new System.Windows.Forms.Label();
+            txtImmichURL.TextChanged += new System.EventHandler(this.txtImmichURL_TextChanged);
+            txtImmichAPIKey.TextChanged += new System.EventHandler(this.txtImmichAPIKey_TextChanged);
+            cbImmichDirectURL.CheckedChanged += new System.EventHandler(this.cbImmichDirectURL_CheckedChanged);
+            cbImmichUseAlbum.CheckedChanged += new System.EventHandler(this.cbImmichUseAlbum_CheckedChanged);
+            cbImmichAlbum.SelectedIndexChanged += new System.EventHandler(this.cbImmichAlbum_SelectedIndexChanged);
+            btnImmichLoadAlbums.Click += new System.EventHandler(this.btnImmichLoadAlbums_Click);
+            btnImmichAPITest.Click += new System.EventHandler(this.btnImmichAPITest_Click);
             gbPrivateBinCredentials.SuspendLayout();
             tpURLShorteners.SuspendLayout();
             tcURLShorteners.SuspendLayout();
@@ -641,6 +661,7 @@ namespace ShareX.UploadersLib
             tpImageUploaders.SuspendLayout();
             tcImageUploaders.SuspendLayout();
             tpImgur.SuspendLayout();
+            tpImmich.SuspendLayout();
             tpImageShack.SuspendLayout();
             tpFlickr.SuspendLayout();
             tpPhotobucket.SuspendLayout();
@@ -3968,6 +3989,7 @@ namespace ShareX.UploadersLib
             tcImageUploaders.Controls.Add(tpPhotobucket);
             tcImageUploaders.Controls.Add(tpChevereto);
             tcImageUploaders.Controls.Add(tpVgyme);
+            tcImageUploaders.Controls.Add(tpImmich);
             resources.ApplyResources(tcImageUploaders, "tcImageUploaders");
             tcImageUploaders.Name = "tcImageUploaders";
             tcImageUploaders.SelectedIndex = 0;
@@ -4069,6 +4091,56 @@ namespace ShareX.UploadersLib
             // 
             resources.ApplyResources(lblImgurThumbnailType, "lblImgurThumbnailType");
             lblImgurThumbnailType.Name = "lblImgurThumbnailType";
+            // 
+            // tpImmich
+            // 
+            tpImmich.BackColor = System.Drawing.SystemColors.Window;
+            tpImmich.Controls.Add(lblImmichAPITest);
+            tpImmich.Controls.Add(btnImmichLoadAlbums);
+            tpImmich.Controls.Add(btnImmichAPITest);
+            tpImmich.Controls.Add(cbImmichUseAlbum);
+            tpImmich.Controls.Add(cbImmichAlbum);
+            tpImmich.Controls.Add(lblImmichAlbum);
+            tpImmich.Controls.Add(lblImmichURLGuide);
+            tpImmich.Controls.Add(cbImmichDirectURL);
+            tpImmich.Controls.Add(lblImmichURL);
+            tpImmich.Controls.Add(txtImmichURL);
+            tpImmich.Controls.Add(txtImmichAPIKey);
+            tpImmich.Controls.Add(lblImmichAPIKey);
+            resources.ApplyResources(tpImmich, "tpImmich");
+            tpImmich.Name = "tpImmich";
+            // 
+            // lblImmichURLGuide
+            // 
+            resources.ApplyResources(lblImmichURLGuide, "lblImmichURLGuide");
+            lblImmichURLGuide.Name = "lblImmichURLGuide";
+            // 
+            // cbImmichDirectURL
+            // 
+            resources.ApplyResources(cbImmichDirectURL, "cbImmichDirectURL");
+            cbImmichDirectURL.Name = "cbImmichDirectURL";
+            cbImmichDirectURL.UseVisualStyleBackColor = true;
+            // 
+            // lblImmichURL
+            // 
+            resources.ApplyResources(lblImmichURL, "lblImmichURL");
+            lblImmichURL.Name = "lblImmichURL";
+            // 
+            // txtImmichURL
+            // 
+            resources.ApplyResources(txtImmichURL, "txtImmichURL");
+            txtImmichURL.Name = "txtImmichURL";
+            // 
+            // txtImmichAPIKey
+            // 
+            resources.ApplyResources(txtImmichAPIKey, "txtImmichAPIKey");
+            txtImmichAPIKey.Name = "txtImmichAPIKey";
+            txtImmichAPIKey.UseSystemPasswordChar = true;
+            // 
+            // lblImmichAPIKey
+            // 
+            resources.ApplyResources(lblImmichAPIKey, "lblImmichAPIKey");
+            lblImmichAPIKey.Name = "lblImmichAPIKey";
             // 
             // tpImageShack
             // 
@@ -4393,6 +4465,40 @@ namespace ShareX.UploadersLib
             actRapidShareAccountType.Name = "actRapidShareAccountType";
             actRapidShareAccountType.SelectedAccountType = AccountType.Anonymous;
             // 
+            // lblImmichAlbum
+            // 
+            resources.ApplyResources(lblImmichAlbum, "lblImmichAlbum");
+            lblImmichAlbum.Name = "lblImmichAlbum";
+            // 
+            // cbImmichAlbum
+            // 
+            cbImmichAlbum.FormattingEnabled = true;
+            resources.ApplyResources(cbImmichAlbum, "cbImmichAlbum");
+            cbImmichAlbum.Name = "cbImmichAlbum";
+            // 
+            // cbImmichUseAlbum
+            // 
+            resources.ApplyResources(cbImmichUseAlbum, "cbImmichUseAlbum");
+            cbImmichUseAlbum.Name = "cbImmichUseAlbum";
+            cbImmichUseAlbum.UseVisualStyleBackColor = true;
+            // 
+            // btnImmichAPITest
+            // 
+            resources.ApplyResources(btnImmichAPITest, "btnImmichAPITest");
+            btnImmichAPITest.Name = "btnImmichAPITest";
+            btnImmichAPITest.UseVisualStyleBackColor = true;
+            // 
+            // btnImmichLoadAlbums
+            // 
+            resources.ApplyResources(btnImmichLoadAlbums, "btnImmichLoadAlbums");
+            btnImmichLoadAlbums.Name = "btnImmichLoadAlbums";
+            btnImmichLoadAlbums.UseVisualStyleBackColor = true;
+            // 
+            // lblImmichAPITest
+            // 
+            resources.ApplyResources(lblImmichAPITest, "lblImmichAPITest");
+            lblImmichAPITest.Name = "lblImmichAPITest";
+            // 
             // UploadersConfigForm
             // 
             resources.ApplyResources(this, "$this");
@@ -4521,6 +4627,8 @@ namespace ShareX.UploadersLib
             tcImageUploaders.ResumeLayout(false);
             tpImgur.ResumeLayout(false);
             tpImgur.PerformLayout();
+            tpImmich.ResumeLayout(false);
+            tpImmich.PerformLayout();
             tpImageShack.ResumeLayout(false);
             tpImageShack.PerformLayout();
             tpFlickr.ResumeLayout(false);
@@ -5063,5 +5171,18 @@ namespace ShareX.UploadersLib
         private System.Windows.Forms.TextBox txtAzureStorageCacheControl;
         private System.Windows.Forms.Label lblAzureStorageCacheControl;
         private System.Windows.Forms.Button btnGoogleDriveFolderIDHelp;
+        internal System.Windows.Forms.TabPage tpImmich;
+        private System.Windows.Forms.Label lblImmichURLGuide;
+        private System.Windows.Forms.CheckBox cbImmichDirectURL;
+        private System.Windows.Forms.Label lblImmichURL;
+        private System.Windows.Forms.TextBox txtImmichURL;
+        private System.Windows.Forms.TextBox txtImmichAPIKey;
+        private System.Windows.Forms.Label lblImmichAPIKey;
+        private System.Windows.Forms.Label lblImmichAlbum;
+        private System.Windows.Forms.Button btnImmichLoadAlbums;
+        private System.Windows.Forms.Button btnImmichAPITest;
+        private System.Windows.Forms.CheckBox cbImmichUseAlbum;
+        private System.Windows.Forms.ComboBox cbImmichAlbum;
+        private System.Windows.Forms.Label lblImmichAPITest;
     }
 }

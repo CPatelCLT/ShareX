@@ -235,6 +235,19 @@ namespace ShareX.UploadersLib
             txtVgymeUserKey.Text = Config.VgymeUserKey;
 
             #endregion vgy.me
+
+            #region Immich
+
+            txtImmichURL.Text = Config.ImmichBaseUrl;
+            txtImmichAPIKey.Text = Config.ImmichApiKey;
+            cbImmichDirectURL.Checked = Config.ImmichDirectURL;
+            cbImmichUseAlbum.Checked = Config.ImmichUseAlbum;
+            cbImmichAlbum.Enabled = Config.ImmichUseAlbum;
+            lblImmichAlbum.Enabled = Config.ImmichUseAlbum;
+            btnImmichLoadAlbums.Enabled = Config.ImmichUseAlbum && !string.IsNullOrEmpty(Config.ImmichBaseUrl) && !string.IsNullOrEmpty(Config.ImmichApiKey);
+            cbImmichAlbum.Text = Config.ImmichAlbum;
+
+            #endregion Immich
         }
 
         private void LoadTextUploaderSettings()
@@ -971,6 +984,81 @@ namespace ShareX.UploadersLib
         }
 
         #endregion vgy.me
+
+        #region Immich
+
+        private void txtImmichURL_TextChanged(object sender, EventArgs e)
+        {
+            Config.ImmichBaseUrl = txtImmichURL.Text;
+            btnImmichLoadAlbums.Enabled = Config.ImmichUseAlbum && !string.IsNullOrEmpty(Config.ImmichBaseUrl) && !string.IsNullOrEmpty(Config.ImmichApiKey);
+        }
+
+        private void txtImmichAPIKey_TextChanged(object sender, EventArgs e)
+        {
+            Config.ImmichApiKey = txtImmichAPIKey.Text;
+            btnImmichLoadAlbums.Enabled = Config.ImmichUseAlbum && !string.IsNullOrEmpty(Config.ImmichBaseUrl) && !string.IsNullOrEmpty(Config.ImmichApiKey);
+        }
+
+        private void cbImmichDirectURL_CheckedChanged(object sender, EventArgs e)
+        {
+            Config.ImmichDirectURL = cbImmichDirectURL.Checked;
+        }
+
+        private void cbImmichUseAlbum_CheckedChanged(object sender, EventArgs e)
+        {
+            Config.ImmichUseAlbum = cbImmichUseAlbum.Checked;
+            cbImmichAlbum.Enabled = Config.ImmichUseAlbum;
+            lblImmichAlbum.Enabled = Config.ImmichUseAlbum;
+            btnImmichLoadAlbums.Enabled = Config.ImmichUseAlbum && !string.IsNullOrEmpty(Config.ImmichBaseUrl) && !string.IsNullOrEmpty(Config.ImmichApiKey);
+        }
+
+        private void cbImmichAlbum_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbImmichAlbum.SelectedItem is ImmichAlbum album)
+            {
+                Config.ImmichAlbum = album.Id;
+            }
+        }
+
+        private void btnImmichLoadAlbums_Click(object sender, EventArgs e)
+        {
+            ImmichLoadAlbums();
+        }
+
+        private void btnImmichAPITest_Click(object sender, EventArgs e)
+        {
+            ImmichAPITest();
+        }
+
+        private void ImmichLoadAlbums()
+        {
+            (List<ImmichAlbum> albums, string message) = ImmichUploader.LoadAlbums(Config.ImmichBaseUrl, Config.ImmichApiKey);
+            lblImmichAPITest.Text = message;
+
+            if (albums != null)
+            {
+                cbImmichAlbum.Items.Clear();
+                cbImmichAlbum.Items.AddRange(albums.ToArray());
+
+                // Select previously selected album if available
+                if (!string.IsNullOrEmpty(Config.ImmichAlbum))
+                {
+                    ImmichAlbum previouslySelected = albums.Find(a => a.Id == Config.ImmichAlbum);
+                    if (previouslySelected != null)
+                    {
+                        cbImmichAlbum.SelectedItem = previouslySelected;
+                    }
+                }
+            }
+        }
+
+        private void ImmichAPITest()
+        {
+            (bool success, string message) = ImmichUploader.TestApiConnection(Config.ImmichBaseUrl, Config.ImmichApiKey);
+            lblImmichAPITest.Text = message;
+        }
+
+        #endregion Immich
 
         #endregion Image uploaders
 
