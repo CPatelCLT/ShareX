@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ShareX.UploadersLib.ImageUploaders
@@ -67,53 +68,18 @@ namespace ShareX.UploadersLib.ImageUploaders
         public bool UseAlbum { get; set; }
         public string Album { get; set; }
 
-        // Server config with external domain for share links
-        private ImmichServerConfig _serverConfig;
         private string _cachedExternalDomain;
 
-        /// <summary>
-        /// Initializes a new instance of the ImmichUploader class.
-        /// </summary>
-        /// <param name="baseUrl">The base URL of the Immich server.</param>
-        /// <param name="apiKey">The API key for authentication.</param>
+        NameValueCollection headers = new NameValueCollection();
+
         public ImmichUploader(string baseUrl, string apiKey)
         {
-            // Trim trailing slash to ensure consistent URL construction
             BaseUrl = baseUrl?.TrimEnd('/');
             ApiKey = apiKey;
+            headers.Add("x-api-key", ApiKey);
         }
 
-        /// <summary>
-        /// Gets the server configuration including external domain for share links.
-        /// </summary>
-        /// <returns>The server configuration, or null if the request fails.</returns>
-        private ImmichServerConfig GetServerConfig()
-        {
-            try
-            {
-                string url = URLHelpers.CombineURL(BaseUrl, "api/server/config");
-                NameValueCollection headers = GetAuthHeaders();
-
-                string response = SendRequest(HttpMethod.GET, url, headers: headers);
-
-                if (!string.IsNullOrEmpty(response))
-                {
-                    return JsonConvert.DeserializeObject<ImmichServerConfig>(response);
-                }
-            }
-            catch (Exception ex)
-            {
-                DebugHelper.WriteException(ex, "Error getting Immich server config");
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Gets the external domain for share links.
-        /// Returns null if not configured or if server config cannot be retrieved.
-        /// </summary>
-        /// <returns>The external domain URL, or null if not configured.</returns>
+        // https://api.immich.app/endpoints/server/getServerConfig
         private string GetExternalDomain()
         {
             // Return cached value if already fetched
@@ -122,29 +88,20 @@ namespace ShareX.UploadersLib.ImageUploaders
                 return _cachedExternalDomain;
             }
 
-            if (_serverConfig is null)
+            string url = URLHelpers.CombineURL(BaseUrl, "api/server/config");
+            string result = SendRequest(HttpMethod.GET, url, headers: headers);
+
+            if (!string.IsNullOrEmpty(result))
             {
-                _serverConfig = GetServerConfig();
+                ImmichServerConfig response = JsonConvert.DeserializeObject<ImmichServerConfig>(result);
+                _cachedExternalDomain = response.externalDomain;
+                return _cachedExternalDomain;
             }
 
-            string domain = _serverConfig?.externalDomain?.TrimEnd('/');
-            
-            // Validate external domain format
-            if (!string.IsNullOrEmpty(domain) && !domain.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !domain.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-            {
-                domain = $"https://{domain}";
-            }
-
-            // Cache the result
-            _cachedExternalDomain = domain;
-            return domain;
+            return null;
         }
 
-        /// <summary>
-        /// Checks if the API key is valid and has upload permissions by calling the /api/users/me endpoint
-        /// </summary>
-        /// <returns>True if the API key is valid, otherwise false.</returns>
-        public bool CheckApiPermissions()
+        private bool CheckApiPermissions()
         {
             if (string.IsNullOrEmpty(BaseUrl) || string.IsNullOrEmpty(ApiKey))
             {
@@ -152,38 +109,22 @@ namespace ShareX.UploadersLib.ImageUploaders
                 return false;
             }
 
-            try
+            string url = URLHelpers.CombineURL(BaseUrl, "api/users/me");
+            string response = SendRequest(HttpMethod.GET, url, headers: headers);
+
+            if (!string.IsNullOrEmpty(response))
             {
-                string url = URLHelpers.CombineURL(BaseUrl, "api/users/me");
-                NameValueCollection headers = GetAuthHeaders();
-
-                string response = SendRequest(HttpMethod.GET, url, headers: headers);
-
-                if (!string.IsNullOrEmpty(response))
+                ImmichUserResponse userResponse = JsonConvert.DeserializeObject<ImmichUserResponse>(response);
+                if (userResponse is not null && !string.IsNullOrEmpty(userResponse.id))
                 {
-                    ImmichUserResponse userResponse = JsonConvert.DeserializeObject<ImmichUserResponse>(response);
-                    if (userResponse is not null && !string.IsNullOrEmpty(userResponse.id))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
+            }
 
-                Errors.Add("Failed to validate Immich API key. Please check your base URL and API key.");
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Errors.Add($"Error checking Immich API permissions: {ex.Message}");
-                return false;
-            }
+            Errors.Add("Failed to validate Immich API key. Please check your base URL and API key.");
+            return false;
         }
 
-        /// <summary>
-        /// Uploads an image stream to Immich.
-        /// </summary>
-        /// <param name="stream">The image stream to upload.</param>
-        /// <param name="fileName">The name of the file.</param>
-        /// <returns>The upload result containing the response and URL.</returns>
         public override UploadResult Upload(Stream stream, string fileName)
         {
             if (!CheckApiPermissions())
@@ -191,175 +132,114 @@ namespace ShareX.UploadersLib.ImageUploaders
                 return null;
             }
 
-            UploadResult result = UploadImageInternal(stream, fileName);
-
-            if (result is not null && result.IsSuccess && !string.IsNullOrEmpty(result.Response))
-            {
-                try
-                {
-                    ImmichUploadResponse uploadResponse = JsonConvert.DeserializeObject<ImmichUploadResponse>(result.Response);
-                    if (uploadResponse is not null && !string.IsNullOrEmpty(uploadResponse.id))
-                    {
-                        // Add to album if specified
-                        if (UseAlbum && !string.IsNullOrEmpty(Album))
-                        {
-                            AddAssetToAlbum(uploadResponse.id, Album);
-                        }
-
-                        // Set the URL based on DirectURL setting
-                        if (DirectURL)
-                        {
-                            string directUrl = CreateDirectLinkForAsset(uploadResponse.id);
-                            if (!string.IsNullOrEmpty(directUrl))
-                            {
-                                result.URL = directUrl;
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    DebugHelper.WriteException(ex, "Error processing Immich upload response");
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Uploads an image to the Immich assets endpoint.
-        /// </summary>
-        /// <param name="stream">The image stream to upload.</param>
-        /// <param name="fileName">The name of the file.</param>
-        /// <returns>The upload result from the API.</returns>
-        private UploadResult UploadImageInternal(Stream stream, string fileName)
-        {
+            // https://api.immich.app/endpoints/assets/uploadAsset
             string url = URLHelpers.CombineURL(BaseUrl, "api/assets");
-            NameValueCollection headers = GetAuthHeaders();
-
-            // Generate unique device identifiers
-            string deviceId = Environment.MachineName;
+            string deviceId = ShareXResources.UserAgent;
             string deviceAssetId = Guid.NewGuid().ToString();
-            DateTime now = DateTime.UtcNow;
+            string now = DateTime.Now.ToString("O"); ;
 
             Dictionary<string, string> args = new Dictionary<string, string>
             {
                 { "deviceAssetId", deviceAssetId },
                 { "deviceId", deviceId },
-                { "fileCreatedAt", now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ") },
-                { "fileModifiedAt", now.ToString("yyyy-MM-ddTHH:mm:ss.fffZ") }
+                { "fileCreatedAt", now },
+                { "fileModifiedAt", now }
             };
 
+            ImmichUploadResponse uploadResponse = new ImmichUploadResponse();
             UploadResult result = SendRequestFile(url, stream, fileName, "assetData", args, headers);
+
+            if (result?.Response != null)
+            {
+                uploadResponse = JsonConvert.DeserializeObject<ImmichUploadResponse>(result.Response);
+            }
+
+            
+            if (UseAlbum && !string.IsNullOrEmpty(Album))
+            {
+                AddAssetToAlbum(uploadResponse.id, Album);
+            }
+            
+
+            result.URL = CreateLink(uploadResponse.id, DirectURL);
 
             return result;
         }
 
-        /// <summary>
-        /// Creates a shared link for the asset and returns the share URL.
-        /// </summary>
-        /// <param name="assetId">The ID of the asset to share.</param>
-        /// <returns>A shared link URL to view the asset, or null if the operation fails.</returns>
-        /// <exception cref="ArgumentException">Thrown when assetId is null or empty.</exception>
-        private string CreateDirectLinkForAsset(string assetId)
+        private string CreateLink(string assetId, bool directLink = true, string slug = null)
         {
-            if (string.IsNullOrWhiteSpace(assetId))
+            string url = URLHelpers.CombineURL(BaseUrl, "api/shared-links");
+            string domain = GetExternalDomain() ?? BaseUrl;
+            headers.Add("Content-Type", "application/json");
+            string idasset = assetId;
+
+            ImmichSharedLinkRequest request = new ImmichSharedLinkRequest
             {
-                throw new ArgumentException("Asset ID cannot be null or empty.", nameof(assetId));
+                type = "INDIVIDUAL",
+                assetIds = new List<string> { assetId }
+            };
+            ImmichSharedLinkResponse response = new ImmichSharedLinkResponse();
+
+            string json = JsonConvert.SerializeObject(request);
+            string result = SendRequest(HttpMethod.POST, url, json, "application/json", headers: headers);
+            headers.Remove("Content-Type");
+
+            if (slug != null) {
+                domain = domain + "/s";
+            }
+            else
+            {
+                domain = domain + "/share";
             }
 
-            try
+            if (!string.IsNullOrEmpty(result))
             {
-                string url = URLHelpers.CombineURL(BaseUrl, "api/shared-links");
-                NameValueCollection headers = GetAuthHeaders();
-                headers.Add("Content-Type", "application/json");
+                response = JsonConvert.DeserializeObject<ImmichSharedLinkResponse>(result);
+                bool check = string.IsNullOrEmpty(response?.key);
 
-                ImmichSharedLinkRequest request = new ImmichSharedLinkRequest
+                if (!check && directLink == true)
                 {
-                    type = "INDIVIDUAL",
-                    assetIds = new List<string> { assetId },
-                    allowDownload = false,
-                    showMetadata = false
-                };
-
-                string json = JsonConvert.SerializeObject(request);
-                string response = SendRequest(HttpMethod.POST, url, json, "application/json", headers: headers);
-
-                if (!string.IsNullOrEmpty(response))
-                {
-                    ImmichSharedLinkResponse linkResponse = JsonConvert.DeserializeObject<ImmichSharedLinkResponse>(response);
-                    if (linkResponse is not null && !string.IsNullOrEmpty(linkResponse.key))
-                    {
-                        // Use external domain if configured, otherwise fall back to base URL
-                        string domain = GetExternalDomain() ?? BaseUrl;
-                        // Return the shared link URL in the format /share/{key}
-                        return URLHelpers.CombineURL(domain, $"share/{linkResponse.key}");
-                    }
+                    return domain + "/photo/" + response.key + "/" + idasset + "/original";
+                    //return URLHelpers.CombineURL(domain, $"/photo/{response.key}/{assetId}/original");
                 }
-            }
-            catch (Exception ex)
-            {
-                DebugHelper.WriteException(ex, "Error creating Immich shared link");
-            }
+                if (!check && directLink == false)
+                {
+                    return domain + "/photo/" + response.key + "/" + idasset + "/original";
+                }
 
+            }
             return null;
         }
 
-        /// <summary>
-        /// Gets the authentication headers for API requests.
-        /// </summary>
-        /// <returns>A collection containing the x-api-key header.</returns>
-        private NameValueCollection GetAuthHeaders()
-        {
-            NameValueCollection headers = new NameValueCollection();
-            headers.Add("x-api-key", ApiKey);
-            return headers;
-        }
-
-        /// <summary> 
-        /// Gets a list of albums from Immich.
-        /// </summary>
-        /// <returns>A list of albums, or an empty list if the request fails.</returns>
+        // https://api.immich.app/endpoints/albums/getAllAlbums
+        // replace this for linq later...
         public List<ImmichAlbum> GetAlbums()
         {
             List<ImmichAlbum> albums = new List<ImmichAlbum>();
+            List<ImmichAlbumResponse> albumResponses = new List<ImmichAlbumResponse>();
 
-            try
+            string url = URLHelpers.CombineURL(BaseUrl, "api/albums");
+            string response = SendRequest(HttpMethod.GET, url, headers: headers);
+
+            if (!string.IsNullOrEmpty(response))
             {
-                string url = URLHelpers.CombineURL(BaseUrl, "api/albums");
-                NameValueCollection headers = GetAuthHeaders();
-
-                string response = SendRequest(HttpMethod.GET, url, headers: headers);
-
-                if (!string.IsNullOrEmpty(response))
-                {
-                    List<ImmichAlbumResponse> albumResponses = JsonConvert.DeserializeObject<List<ImmichAlbumResponse>>(response);
-                    if (albumResponses is not null)
-                    {
-                        foreach (var album in albumResponses)
-                        {
-                            if (!string.IsNullOrEmpty(album.id) && !string.IsNullOrEmpty(album.albumName))
-                            {
-                                albums.Add(new ImmichAlbum { Id = album.id, Name = album.albumName });
-                            }
-                        }
-                    }
-                }
+                albumResponses = JsonConvert.DeserializeObject<List<ImmichAlbumResponse>>(response);
             }
-            catch (Exception ex)
+
+            if (albumResponses != null)
             {
-                DebugHelper.WriteException(ex, "Error getting Immich albums");
+                foreach (var album in albumResponses)
+                {
+                    if (!string.IsNullOrEmpty(album?.id) && !string.IsNullOrEmpty(album?.albumName))
+                    {
+                        albums.Add(new ImmichAlbum { Id = album.id, Name = album.albumName });
+                    }
+                } 
             }
 
             return albums;
         }
 
-        /// <summary>
-        /// Tests the API connection to Immich.
-        /// </summary>
-        /// <param name="baseUrl">The base URL of the Immich server.</param>
-        /// <param name="apiKey">The API key for authentication.</param>
-        /// <returns>A tuple containing success status and message.</returns>
         public static (bool success, string message) TestApiConnection(string baseUrl, string apiKey)
         {
             if (string.IsNullOrEmpty(baseUrl) || string.IsNullOrEmpty(apiKey))
@@ -367,33 +247,19 @@ namespace ShareX.UploadersLib.ImageUploaders
                 return (false, "Please enter URL and API key");
             }
 
-            try
-            {
-                ImmichUploader uploader = new ImmichUploader(baseUrl, apiKey);
-                bool isValid = uploader.CheckApiPermissions();
+            ImmichUploader uploader = new ImmichUploader(baseUrl, apiKey);
+            bool isValid = uploader.CheckApiPermissions();
 
-                if (isValid)
-                {
-                    return (true, "API connection successful");
-                }
-                else
-                {
-                    return (false, "API connection failed: " + string.Join(", ", uploader.Errors));
-                }
-            }
-            catch (Exception ex)
+            if (isValid)
             {
-                DebugHelper.WriteException(ex);
-                return (false, "API connection failed");
+                return (true, "API connection successful");
+            }
+            else
+            {
+                return (false, "API connection failed: " + string.Join(", ", uploader.Errors));
             }
         }
 
-        /// <summary>
-        /// Loads albums from Immich.
-        /// </summary>
-        /// <param name="baseUrl">The base URL of the Immich server.</param>
-        /// <param name="apiKey">The API key for authentication.</param>
-        /// <returns>A tuple containing the list of albums and a status message.</returns>
         public static (List<ImmichAlbum> albums, string message) LoadAlbums(string baseUrl, string apiKey)
         {
             if (string.IsNullOrEmpty(baseUrl) || string.IsNullOrEmpty(apiKey))
@@ -422,46 +288,28 @@ namespace ShareX.UploadersLib.ImageUploaders
             }
         }
 
-        /// <summary>
-        /// Adds an asset to a specific album.
-        /// </summary>
-        /// <param name="assetId">The ID of the asset to add.</param>
-        /// <param name="albumId">The ID of the album to add the asset to.</param>
-        /// <returns>True if successful, otherwise false.</returns>
-        /// <exception cref="ArgumentException">Thrown when assetId or albumId is null or empty.</exception>
         public bool AddAssetToAlbum(string assetId, string albumId)
         {
-            if (string.IsNullOrWhiteSpace(assetId))
+            if (string.IsNullOrWhiteSpace(assetId) || string.IsNullOrWhiteSpace(albumId))
             {
-                throw new ArgumentException("Asset ID cannot be null or empty.", nameof(assetId));
-            }
-
-            if (string.IsNullOrWhiteSpace(albumId))
-            {
-                throw new ArgumentException("Album ID cannot be null or empty.", nameof(albumId));
-            }
-
-            try
-            {
-                string url = URLHelpers.CombineURL(BaseUrl, $"api/albums/{albumId}/assets");
-                NameValueCollection headers = GetAuthHeaders();
-                headers.Add("Content-Type", "application/json");
-
-                var requestBody = new
-                {
-                    ids = new List<string> { assetId }
-                };
-
-                string json = JsonConvert.SerializeObject(requestBody);
-                string response = SendRequest(HttpMethod.PUT, url, json, "application/json", headers: headers);
-
-                return !string.IsNullOrEmpty(response);
-            }
-            catch (Exception ex)
-            {
-                DebugHelper.WriteException(ex, "Error adding asset to Immich album");
+                Errors.Add("Asset or Album ID cannot be null or empty.");
                 return false;
             }
+
+            string url = URLHelpers.CombineURL(BaseUrl, $"api/albums/{albumId}/assets");
+            headers.Add("Content-Type", "application/json");
+
+            var requestBody = new
+            {
+                ids = new List<string> { assetId }
+            };
+
+            string json = JsonConvert.SerializeObject(requestBody);
+            string response = SendRequest(HttpMethod.PUT, url, json, "application/json", headers: headers);
+            headers.Remove("Content-Type");
+
+            return !string.IsNullOrEmpty(response);
+
         }
     }
 

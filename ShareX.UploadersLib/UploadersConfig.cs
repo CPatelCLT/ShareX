@@ -85,12 +85,14 @@ namespace ShareX.UploadersLib
 
         #region Immich
 
-        [JsonEncrypt]
-        public string ImmichApiKey { get; set; } = "";
         public string ImmichBaseUrl { get; set; } = "";
         public bool ImmichDirectURL { get; set; } = true;
         public bool ImmichUseAlbum { get; set; } = false;
         public string ImmichAlbum { get; set; } = "";
+        public string ImmichExternalDomain { get; set; } = "";
+
+        [JsonEncrypt]
+        public string ImmichApiKey { get; set; } = "";
 
         #endregion Immich
 
