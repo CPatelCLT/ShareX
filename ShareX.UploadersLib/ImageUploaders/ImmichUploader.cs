@@ -33,6 +33,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace ShareX.UploadersLib.ImageUploaders
 {
@@ -51,7 +52,7 @@ namespace ShareX.UploadersLib.ImageUploaders
         {
             return new ImmichUploader(config.ImmichBaseUrl, config.ImmichApiKey)
             {
-                DirectURL = config.ImmichDirectURL,
+                UseSlugs = config.ImmichUseSlugs,
                 UseAlbum = config.ImmichUseAlbum,
                 Album = config.ImmichAlbum
             };
@@ -64,7 +65,7 @@ namespace ShareX.UploadersLib.ImageUploaders
     {
         public string BaseUrl { get; set; }
         public string ApiKey { get; set; }
-        public bool DirectURL { get; set; } = true;
+        public bool UseSlugs { get; set; }
         public bool UseAlbum { get; set; }
         public string Album { get; set; }
 
@@ -161,22 +162,31 @@ namespace ShareX.UploadersLib.ImageUploaders
             }
             
 
-            result.URL = CreateLink(uploadResponse.id, DirectURL);
+            result.URL = CreateLink(uploadResponse.id, fileName);
 
             return result;
         }
 
-        private string CreateLink(string assetId, bool directLink = true, string slug = null)
+        private string CreateLink(string assetId, string fileName)
         {
             string url = URLHelpers.CombineURL(BaseUrl, "api/shared-links");
             string domain = GetExternalDomain() ?? BaseUrl;
             headers.Add("Content-Type", "application/json");
-            string idasset = assetId;
+            string slug = null;
+
+            if (UseSlugs)
+            {
+                slug = fileName.Substring(0, (fileName.Length - 4));
+            }
 
             ImmichSharedLinkRequest request = new ImmichSharedLinkRequest
             {
                 type = "INDIVIDUAL",
-                assetIds = new List<string> { assetId }
+                slug = slug,
+                assetIds = new List<string> { assetId },
+                allowDownload = true,
+                allowUpload = false,
+                showMetadata = true
             };
             ImmichSharedLinkResponse response = new ImmichSharedLinkResponse();
 
@@ -184,27 +194,18 @@ namespace ShareX.UploadersLib.ImageUploaders
             string result = SendRequest(HttpMethod.POST, url, json, "application/json", headers: headers);
             headers.Remove("Content-Type");
 
-            if (slug != null) {
-                domain = domain + "/s";
-            }
-            else
-            {
-                domain = domain + "/share";
-            }
-
             if (!string.IsNullOrEmpty(result))
             {
                 response = JsonConvert.DeserializeObject<ImmichSharedLinkResponse>(result);
                 bool check = string.IsNullOrEmpty(response?.key);
 
-                if (!check && directLink == true)
+                if (!check && UseSlugs)
                 {
-                    return domain + "/photo/" + response.key + "/" + idasset + "/original";
-                    //return URLHelpers.CombineURL(domain, $"/photo/{response.key}/{assetId}/original");
+                    return domain + "/s/" + slug;
                 }
-                if (!check && directLink == false)
+                if (!check && !UseSlugs)
                 {
-                    return domain + "/photo/" + response.key + "/" + idasset + "/original";
+                    return domain + "/share/photo/" + response.key + "/" + assetId + "/original";
                 }
 
             }
@@ -267,24 +268,16 @@ namespace ShareX.UploadersLib.ImageUploaders
                 return (null, "Please enter URL and API key");
             }
 
-            try
-            {
-                ImmichUploader uploader = new ImmichUploader(baseUrl, apiKey);
-                List<ImmichAlbum> albums = uploader.GetAlbums();
+            ImmichUploader uploader = new ImmichUploader(baseUrl, apiKey);
+            List<ImmichAlbum> albums = uploader.GetAlbums();
 
-                if (albums != null && albums.Count > 0)
-                {
-                    return (albums, $"Loaded {albums.Count} albums");
-                }
-                else
-                {
-                    return (albums, "No albums found");
-                }
-            }
-            catch (Exception ex)
+            if (albums != null && albums.Count > 0)
             {
-                DebugHelper.WriteException(ex);
-                return (null, "Failed to load albums");
+                return (albums, $"Loaded {albums.Count} albums");
+            }
+            else
+            {
+                return (albums, "Albums not found or failed to load");
             }
         }
 
@@ -326,8 +319,10 @@ namespace ShareX.UploadersLib.ImageUploaders
     internal class ImmichSharedLinkRequest
     {
         public string type { get; set; }
+        public string slug { get; set; }
         public List<string> assetIds { get; set; }
         public bool allowDownload { get; set; }
+        public bool allowUpload { get; set; }
         public bool showMetadata { get; set; }
     }
 

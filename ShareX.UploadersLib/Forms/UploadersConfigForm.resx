@@ -520,7 +520,7 @@ For example, if your bucket is called "bucket.example.com" then URL will be "htt
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tpBitly.Size" type="System.Drawing.Size, System.Drawing">
-    <value>803, 539</value>
+    <value>178, 38</value>
   </data>
   <data name="tpBitly.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1573,7 +1573,7 @@ For example, if your bucket is called "bucket.example.com" then URL will be "htt
     <value>3, 3</value>
   </data>
   <data name="tcURLShorteners.Size" type="System.Drawing.Size, System.Drawing">
-    <value>811, 567</value>
+    <value>186, 66</value>
   </data>
   <data name="tcURLShorteners.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1597,7 +1597,7 @@ For example, if your bucket is called "bucket.example.com" then URL will be "htt
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tpURLShorteners.Size" type="System.Drawing.Size, System.Drawing">
-    <value>817, 573</value>
+    <value>192, 72</value>
   </data>
   <data name="tpURLShorteners.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -3040,13 +3040,13 @@ For example, if your bucket is called "bucket.example.com" then URL will be "htt
     <value>13</value>
   </data>
   <data name="tpFTP.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 64</value>
+    <value>4, 244</value>
   </data>
   <data name="tpFTP.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tpFTP.Size" type="System.Drawing.Size, System.Drawing">
-    <value>803, 499</value>
+    <value>178, 0</value>
   </data>
   <data name="tpFTP.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -10607,7 +10607,7 @@ Using an encrypted library disables sharing.</value>
     <value>3, 3</value>
   </data>
   <data name="tcFileUploaders.Size" type="System.Drawing.Size, System.Drawing">
-    <value>811, 567</value>
+    <value>186, 66</value>
   </data>
   <data name="tcFileUploaders.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -10631,7 +10631,7 @@ Using an encrypted library disables sharing.</value>
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tpFileUploaders.Size" type="System.Drawing.Size, System.Drawing">
-    <value>817, 573</value>
+    <value>192, 72</value>
   </data>
   <data name="tpFileUploaders.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -11096,7 +11096,7 @@ Using an encrypted library disables sharing.</value>
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tpPastebin.Size" type="System.Drawing.Size, System.Drawing">
-    <value>803, 539</value>
+    <value>178, 38</value>
   </data>
   <data name="tpPastebin.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -12161,7 +12161,7 @@ Using an encrypted library disables sharing.</value>
     <value>3, 3</value>
   </data>
   <data name="tcTextUploaders.Size" type="System.Drawing.Size, System.Drawing">
-    <value>811, 567</value>
+    <value>186, 66</value>
   </data>
   <data name="tcTextUploaders.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -12185,7 +12185,7 @@ Using an encrypted library disables sharing.</value>
     <value>3, 3, 3, 3</value>
   </data>
   <data name="tpTextUploaders.Size" type="System.Drawing.Size, System.Drawing">
-    <value>817, 573</value>
+    <value>192, 72</value>
   </data>
   <data name="tpTextUploaders.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -13594,6 +13594,66 @@ Using an encrypted library disables sharing.</value>
   <data name="&gt;&gt;tpVgyme.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
+  <data name="llImmichAPIGuide.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="llImmichAPIGuide.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="llImmichAPIGuide.Location" type="System.Drawing.Point, System.Drawing">
+    <value>373, 83</value>
+  </data>
+  <data name="llImmichAPIGuide.Size" type="System.Drawing.Size, System.Drawing">
+    <value>81, 15</value>
+  </data>
+  <data name="llImmichAPIGuide.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="llImmichAPIGuide.Text" xml:space="preserve">
+    <value>API Key Guide</value>
+  </data>
+  <data name="&gt;&gt;llImmichAPIGuide.Name" xml:space="preserve">
+    <value>llImmichAPIGuide</value>
+  </data>
+  <data name="&gt;&gt;llImmichAPIGuide.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;llImmichAPIGuide.Parent" xml:space="preserve">
+    <value>tpImmich</value>
+  </data>
+  <data name="&gt;&gt;llImmichAPIGuide.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="cbImmichSlugs.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="cbImmichSlugs.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="cbImmichSlugs.Location" type="System.Drawing.Point, System.Drawing">
+    <value>17, 240</value>
+  </data>
+  <data name="cbImmichSlugs.Size" type="System.Drawing.Size, System.Drawing">
+    <value>116, 19</value>
+  </data>
+  <data name="cbImmichSlugs.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="cbImmichSlugs.Text" xml:space="preserve">
+    <value>Use Shorter Links</value>
+  </data>
+  <data name="&gt;&gt;cbImmichSlugs.Name" xml:space="preserve">
+    <value>cbImmichSlugs</value>
+  </data>
+  <data name="&gt;&gt;cbImmichSlugs.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbImmichSlugs.Parent" xml:space="preserve">
+    <value>tpImmich</value>
+  </data>
+  <data name="&gt;&gt;cbImmichSlugs.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
   <data name="lblImmichAPITest.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -13616,7 +13676,7 @@ Using an encrypted library disables sharing.</value>
     <value>tpImmich</value>
   </data>
   <data name="&gt;&gt;lblImmichAPITest.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>2</value>
   </data>
   <data name="btnImmichLoadAlbums.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -13643,7 +13703,7 @@ Using an encrypted library disables sharing.</value>
     <value>tpImmich</value>
   </data>
   <data name="&gt;&gt;btnImmichLoadAlbums.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="btnImmichAPITest.Location" type="System.Drawing.Point, System.Drawing">
     <value>267, 80</value>
@@ -13667,13 +13727,13 @@ Using an encrypted library disables sharing.</value>
     <value>tpImmich</value>
   </data>
   <data name="&gt;&gt;btnImmichAPITest.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="cbImmichUseAlbum.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="cbImmichUseAlbum.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 153</value>
+    <value>17, 144</value>
   </data>
   <data name="cbImmichUseAlbum.Size" type="System.Drawing.Size, System.Drawing">
     <value>115, 19</value>
@@ -13694,7 +13754,7 @@ Using an encrypted library disables sharing.</value>
     <value>tpImmich</value>
   </data>
   <data name="&gt;&gt;cbImmichUseAlbum.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>5</value>
   </data>
   <data name="cbImmichAlbum.Location" type="System.Drawing.Point, System.Drawing">
     <value>16, 193</value>
@@ -13715,7 +13775,7 @@ Using an encrypted library disables sharing.</value>
     <value>tpImmich</value>
   </data>
   <data name="&gt;&gt;cbImmichAlbum.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>6</value>
   </data>
   <data name="lblImmichAlbum.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -13745,7 +13805,7 @@ Using an encrypted library disables sharing.</value>
     <value>tpImmich</value>
   </data>
   <data name="&gt;&gt;lblImmichAlbum.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>7</value>
   </data>
   <data name="lblImmichURLGuide.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -13757,13 +13817,13 @@ Using an encrypted library disables sharing.</value>
     <value>264, 36</value>
   </data>
   <data name="lblImmichURLGuide.Size" type="System.Drawing.Size, System.Drawing">
-    <value>168, 15</value>
+    <value>190, 15</value>
   </data>
   <data name="lblImmichURLGuide.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="lblImmichURLGuide.Text" xml:space="preserve">
-    <value>Example: http://example.com/</value>
+    <value>Example: http://example.com:2283</value>
   </data>
   <data name="&gt;&gt;lblImmichURLGuide.Name" xml:space="preserve">
     <value>lblImmichURLGuide</value>
@@ -13775,37 +13835,7 @@ Using an encrypted library disables sharing.</value>
     <value>tpImmich</value>
   </data>
   <data name="&gt;&gt;lblImmichURLGuide.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="cbImmichDirectURL.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="cbImmichDirectURL.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="cbImmichDirectURL.Location" type="System.Drawing.Point, System.Drawing">
-    <value>16, 260</value>
-  </data>
-  <data name="cbImmichDirectURL.Size" type="System.Drawing.Size, System.Drawing">
-    <value>119, 19</value>
-  </data>
-  <data name="cbImmichDirectURL.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="cbImmichDirectURL.Text" xml:space="preserve">
-    <value>Create Direct Link</value>
-  </data>
-  <data name="&gt;&gt;cbImmichDirectURL.Name" xml:space="preserve">
-    <value>cbImmichDirectURL</value>
-  </data>
-  <data name="&gt;&gt;cbImmichDirectURL.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;cbImmichDirectURL.Parent" xml:space="preserve">
-    <value>tpImmich</value>
-  </data>
-  <data name="&gt;&gt;cbImmichDirectURL.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="lblImmichURL.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -13835,7 +13865,7 @@ Using an encrypted library disables sharing.</value>
     <value>tpImmich</value>
   </data>
   <data name="&gt;&gt;lblImmichURL.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="txtImmichURL.Location" type="System.Drawing.Point, System.Drawing">
     <value>16, 32</value>
@@ -13856,7 +13886,7 @@ Using an encrypted library disables sharing.</value>
     <value>tpImmich</value>
   </data>
   <data name="&gt;&gt;txtImmichURL.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="txtImmichAPIKey.Location" type="System.Drawing.Point, System.Drawing">
     <value>16, 80</value>
@@ -13877,7 +13907,7 @@ Using an encrypted library disables sharing.</value>
     <value>tpImmich</value>
   </data>
   <data name="&gt;&gt;txtImmichAPIKey.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>11</value>
   </data>
   <data name="lblImmichAPIKey.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -13907,7 +13937,7 @@ Using an encrypted library disables sharing.</value>
     <value>tpImmich</value>
   </data>
   <data name="&gt;&gt;lblImmichAPIKey.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>12</value>
   </data>
   <data name="tpImmich.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 24</value>

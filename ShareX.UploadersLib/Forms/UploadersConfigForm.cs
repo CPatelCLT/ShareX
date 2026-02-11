@@ -240,12 +240,12 @@ namespace ShareX.UploadersLib
 
             txtImmichURL.Text = Config.ImmichBaseUrl;
             txtImmichAPIKey.Text = Config.ImmichApiKey;
-            cbImmichDirectURL.Checked = Config.ImmichDirectURL;
+            cbImmichSlugs.Checked = Config.ImmichUseSlugs;
             cbImmichUseAlbum.Checked = Config.ImmichUseAlbum;
             cbImmichAlbum.Enabled = Config.ImmichUseAlbum;
             lblImmichAlbum.Enabled = Config.ImmichUseAlbum;
             btnImmichLoadAlbums.Enabled = Config.ImmichUseAlbum && !string.IsNullOrEmpty(Config.ImmichBaseUrl) && !string.IsNullOrEmpty(Config.ImmichApiKey);
-            cbImmichAlbum.Text = Config.ImmichAlbum;
+            cbImmichAlbum.Text = Config.ImmichAlbumName;
 
             #endregion Immich
         }
@@ -999,11 +999,6 @@ namespace ShareX.UploadersLib
             btnImmichLoadAlbums.Enabled = Config.ImmichUseAlbum && !string.IsNullOrEmpty(Config.ImmichBaseUrl) && !string.IsNullOrEmpty(Config.ImmichApiKey);
         }
 
-        private void cbImmichDirectURL_CheckedChanged(object sender, EventArgs e)
-        {
-            Config.ImmichDirectURL = cbImmichDirectURL.Checked;
-        }
-
         private void cbImmichUseAlbum_CheckedChanged(object sender, EventArgs e)
         {
             Config.ImmichUseAlbum = cbImmichUseAlbum.Checked;
@@ -1017,6 +1012,7 @@ namespace ShareX.UploadersLib
             if (cbImmichAlbum.SelectedItem is ImmichAlbum album)
             {
                 Config.ImmichAlbum = album.Id;
+                Config.ImmichAlbumName = album.Name;
             }
         }
 
@@ -1056,6 +1052,14 @@ namespace ShareX.UploadersLib
         {
             (bool success, string message) = ImmichUploader.TestApiConnection(Config.ImmichBaseUrl, Config.ImmichApiKey);
             lblImmichAPITest.Text = message;
+        }
+        private void cbImmichSlugs_CheckedChanged(object sender, EventArgs e)
+        {
+            Config.ImmichUseSlugs = cbImmichSlugs.Checked;
+        }
+        private void llImmichAPIGuide_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            URLHelpers.OpenURL("https://api.immich.app/getting-started");
         }
 
         #endregion Immich
@@ -3014,5 +3018,8 @@ However, there is a workaround. You can navigate to the Google Drive website in 
         #endregion
 
         #endregion URL shorteners
+
+
+        
     }
 }

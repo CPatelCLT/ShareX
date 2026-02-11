@@ -87,8 +87,12 @@ namespace ShareX.UploadersLib
 
         public string ImmichBaseUrl { get; set; } = "";
         public bool ImmichDirectURL { get; set; } = true;
+        public bool ImmichUseSlugs { get; set; } = true;
         public bool ImmichUseAlbum { get; set; } = false;
         public string ImmichAlbum { get; set; } = "";
+
+        public string ImmichAlbumName { get; set; } = "";
+        public string ImmichName { get; set; } = "";
         public string ImmichExternalDomain { get; set; } = "";
 
         [JsonEncrypt]
