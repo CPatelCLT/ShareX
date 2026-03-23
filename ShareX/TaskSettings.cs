@@ -25,6 +25,7 @@
 
 using Newtonsoft.Json;
 using ShareX.HelpersLib;
+using ShareX.ImageEditor.Hosting;
 using ShareX.ImageEffectsLib;
 using ShareX.IndexerLib;
 using ShareX.MediaLib;
@@ -464,6 +465,8 @@ namespace ShareX
         public VideoThumbnailOptions VideoThumbnailOptions = new VideoThumbnailOptions();
         public BorderlessWindowSettings BorderlessWindowSettings = new BorderlessWindowSettings();
         public AIOptions AIOptions = new AIOptions();
+        public ImageEditorOptions ImageEditorOptions = new ImageEditorOptions();
+        public bool UseLegacyImageEditor = false;
     }
 
     public class TaskSettingsAdvanced

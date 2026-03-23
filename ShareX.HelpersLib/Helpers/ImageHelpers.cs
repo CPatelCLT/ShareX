@@ -2267,6 +2267,15 @@ namespace ShareX.HelpersLib
             return null;
         }
 
+        public static Bitmap ByteArrayToBitmap(byte[] bytes)
+        {
+            using (MemoryStream ms = new MemoryStream(bytes))
+            using (Image tempImage = Image.FromStream(ms))
+            {
+                return new Bitmap(tempImage);
+            }
+        }
+
         public static Bitmap LoadImage(string filePath)
         {
             if (!string.IsNullOrEmpty(filePath))

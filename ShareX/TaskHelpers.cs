@@ -25,6 +25,7 @@
 
 using ShareX.HelpersLib;
 using ShareX.HistoryLib;
+using ShareX.ImageEditor.Hosting;
 using ShareX.ImageEffectsLib;
 using ShareX.IndexerLib;
 using ShareX.MediaLib;
@@ -1198,6 +1199,16 @@ namespace ShareX
 
         public static Bitmap AnnotateImage(Bitmap bmp, string filePath, TaskSettings taskSettings, bool taskMode = false)
         {
+            if (taskSettings.ToolsSettings.UseLegacyImageEditor)
+            {
+                return AnnotateImageLegacy(bmp, filePath, taskSettings, taskMode);
+            }
+
+            return AnnotateImageModern(bmp, filePath, taskSettings, taskMode);
+        }
+
+        public static Bitmap AnnotateImageLegacy(Bitmap bmp, string filePath, TaskSettings taskSettings, bool taskMode = false)
+        {
             if (bmp != null)
             {
                 bmp = ImageHelpers.NonIndexedBitmap(bmp);
@@ -1267,6 +1278,89 @@ namespace ShareX
             }
 
             return null;
+        }
+
+        public static Bitmap AnnotateImageModern(Bitmap bmp, string filePath, TaskSettings taskSettings, bool taskMode = false)
+        {
+            Bitmap bmpResult = null;
+
+            Program.MainForm.InvokeSafe(() =>
+            {
+                EditorEvents events = new EditorEvents
+                {
+                    CopyImageRequested = (bytes) =>
+                    {
+                        using (MemoryStream ms = new MemoryStream(bytes))
+                        using (Bitmap img = new Bitmap(ms))
+                        {
+                            MainFormCopyImage(img);
+                        }
+                    },
+                    SaveImageRequested = (bytes, newFilePath) =>
+                    {
+                        using (MemoryStream ms = new MemoryStream(bytes))
+                        using (Bitmap img = new Bitmap(ms))
+                        {
+                            if (string.IsNullOrEmpty(newFilePath))
+                            {
+                                string screenshotsFolder = GetScreenshotsFolder(taskSettings);
+                                string fileName = GetFileName(taskSettings, taskSettings.ImageSettings.ImageFormat.GetDescription(), img);
+                                newFilePath = Path.Combine(screenshotsFolder, fileName);
+                            }
+
+                            ImageHelpers.SaveImage(img, newFilePath);
+                        }
+
+                        return newFilePath;
+                    },
+                    SaveImageAsRequested = (bytes, newFilePath) =>
+                    {
+                        using (MemoryStream ms = new MemoryStream(bytes))
+                        using (Bitmap img = new Bitmap(ms))
+                        {
+                            if (string.IsNullOrEmpty(newFilePath))
+                            {
+                                string screenshotsFolder = GetScreenshotsFolder(taskSettings);
+                                string fileName = GetFileName(taskSettings, taskSettings.ImageSettings.ImageFormat.GetDescription(), img);
+                                newFilePath = Path.Combine(screenshotsFolder, fileName);
+                            }
+
+                            newFilePath = ImageHelpers.SaveImageFileDialog(img, newFilePath);
+                        }
+
+                        return newFilePath;
+                    },
+                    PinImageRequested = (bytes) =>
+                    {
+                        Bitmap bmp = ImageHelpers.ByteArrayToBitmap(bytes);
+                        PinToScreen(bmp, taskSettings);
+                    },
+                    UploadImageRequested = (bytes) =>
+                    {
+                        Bitmap bmp = ImageHelpers.ByteArrayToBitmap(bytes);
+                        MainFormUploadImage(bmp, taskSettings);
+                    }
+                };
+
+                if (bmp != null)
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        bmp.Save(ms, ImageFormat.Png);
+                        ms.Position = 0;
+
+                        byte[] bytesResult = AvaloniaIntegration.ShowEditorDialog(ms, taskSettings.ToolsSettingsReference.ImageEditorOptions,
+                            events, taskMode, filePath);
+
+                        if (bytesResult != null)
+                        {
+                            bmpResult = ImageHelpers.ByteArrayToBitmap(bytesResult);
+                        }
+                    }
+                }
+            });
+
+            return bmpResult;
         }
 
         public static void MainFormCopyImage(Bitmap bmp)

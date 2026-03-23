@@ -297,6 +297,8 @@
             btnWatchFolderRemove = new System.Windows.Forms.Button();
             btnWatchFolderAdd = new System.Windows.Forms.Button();
             tpTools = new System.Windows.Forms.TabPage();
+            tcTools = new System.Windows.Forms.TabControl();
+            tpToolsGeneral = new System.Windows.Forms.TabPage();
             pTools = new System.Windows.Forms.Panel();
             txtToolsScreenColorPickerFormatCtrl = new System.Windows.Forms.TextBox();
             lblToolsScreenColorPickerFormatCtrl = new System.Windows.Forms.Label();
@@ -305,10 +307,16 @@
             txtToolsScreenColorPickerFormat = new System.Windows.Forms.TextBox();
             lblToolsScreenColorPickerFormat = new System.Windows.Forms.Label();
             cbOverrideToolsSettings = new System.Windows.Forms.CheckBox();
+            tpToolsImageEditor = new System.Windows.Forms.TabPage();
+            cbImageEditorAutoCloseEditorOnTask = new System.Windows.Forms.CheckBox();
+            cbImageEditorZoomToFitOnOpen = new System.Windows.Forms.CheckBox();
+            cbImageEditorExitConfirmation = new System.Windows.Forms.CheckBox();
+            cbImageEditorUseLegacyImageEditor = new System.Windows.Forms.CheckBox();
             tpAdvanced = new System.Windows.Forms.TabPage();
             pgTaskSettings = new System.Windows.Forms.PropertyGrid();
             cbOverrideAdvancedSettings = new System.Windows.Forms.CheckBox();
             tttvMain = new ShareX.HelpersLib.TabToTreeView();
+            cbImageEditorAutoCopyImageToClipboard = new System.Windows.Forms.CheckBox();
             tcTaskSettings.SuspendLayout();
             tpTask.SuspendLayout();
             cmsDestinations.SuspendLayout();
@@ -369,7 +377,10 @@
             pActions.SuspendLayout();
             tpWatchFolders.SuspendLayout();
             tpTools.SuspendLayout();
+            tcTools.SuspendLayout();
+            tpToolsGeneral.SuspendLayout();
             pTools.SuspendLayout();
+            tpToolsImageEditor.SuspendLayout();
             tpAdvanced.SuspendLayout();
             SuspendLayout();
             // 
@@ -2354,10 +2365,25 @@
             // tpTools
             // 
             tpTools.BackColor = System.Drawing.SystemColors.Window;
-            tpTools.Controls.Add(pTools);
-            tpTools.Controls.Add(cbOverrideToolsSettings);
+            tpTools.Controls.Add(tcTools);
             resources.ApplyResources(tpTools, "tpTools");
             tpTools.Name = "tpTools";
+            // 
+            // tcTools
+            // 
+            tcTools.Controls.Add(tpToolsGeneral);
+            tcTools.Controls.Add(tpToolsImageEditor);
+            resources.ApplyResources(tcTools, "tcTools");
+            tcTools.Name = "tcTools";
+            tcTools.SelectedIndex = 0;
+            // 
+            // tpToolsGeneral
+            // 
+            tpToolsGeneral.Controls.Add(pTools);
+            tpToolsGeneral.Controls.Add(cbOverrideToolsSettings);
+            resources.ApplyResources(tpToolsGeneral, "tpToolsGeneral");
+            tpToolsGeneral.Name = "tpToolsGeneral";
+            tpToolsGeneral.UseVisualStyleBackColor = true;
             // 
             // pTools
             // 
@@ -2412,6 +2438,45 @@
             cbOverrideToolsSettings.UseVisualStyleBackColor = true;
             cbOverrideToolsSettings.CheckedChanged += cbUseDefaultToolsSettings_CheckedChanged;
             // 
+            // tpToolsImageEditor
+            // 
+            tpToolsImageEditor.Controls.Add(cbImageEditorAutoCopyImageToClipboard);
+            tpToolsImageEditor.Controls.Add(cbImageEditorAutoCloseEditorOnTask);
+            tpToolsImageEditor.Controls.Add(cbImageEditorZoomToFitOnOpen);
+            tpToolsImageEditor.Controls.Add(cbImageEditorExitConfirmation);
+            tpToolsImageEditor.Controls.Add(cbImageEditorUseLegacyImageEditor);
+            resources.ApplyResources(tpToolsImageEditor, "tpToolsImageEditor");
+            tpToolsImageEditor.Name = "tpToolsImageEditor";
+            tpToolsImageEditor.UseVisualStyleBackColor = true;
+            // 
+            // cbImageEditorAutoCloseEditorOnTask
+            // 
+            resources.ApplyResources(cbImageEditorAutoCloseEditorOnTask, "cbImageEditorAutoCloseEditorOnTask");
+            cbImageEditorAutoCloseEditorOnTask.Name = "cbImageEditorAutoCloseEditorOnTask";
+            cbImageEditorAutoCloseEditorOnTask.UseVisualStyleBackColor = true;
+            cbImageEditorAutoCloseEditorOnTask.CheckedChanged += cbImageEditorAutoCloseEditorOnTask_CheckedChanged;
+            // 
+            // cbImageEditorZoomToFitOnOpen
+            // 
+            resources.ApplyResources(cbImageEditorZoomToFitOnOpen, "cbImageEditorZoomToFitOnOpen");
+            cbImageEditorZoomToFitOnOpen.Name = "cbImageEditorZoomToFitOnOpen";
+            cbImageEditorZoomToFitOnOpen.UseVisualStyleBackColor = true;
+            cbImageEditorZoomToFitOnOpen.CheckedChanged += cbImageEditorZoomToFitOnOpen_CheckedChanged;
+            // 
+            // cbImageEditorExitConfirmation
+            // 
+            resources.ApplyResources(cbImageEditorExitConfirmation, "cbImageEditorExitConfirmation");
+            cbImageEditorExitConfirmation.Name = "cbImageEditorExitConfirmation";
+            cbImageEditorExitConfirmation.UseVisualStyleBackColor = true;
+            cbImageEditorExitConfirmation.CheckedChanged += cbImageEditorExitConfirmation_CheckedChanged;
+            // 
+            // cbImageEditorUseLegacyImageEditor
+            // 
+            resources.ApplyResources(cbImageEditorUseLegacyImageEditor, "cbImageEditorUseLegacyImageEditor");
+            cbImageEditorUseLegacyImageEditor.Name = "cbImageEditorUseLegacyImageEditor";
+            cbImageEditorUseLegacyImageEditor.UseVisualStyleBackColor = true;
+            cbImageEditorUseLegacyImageEditor.CheckedChanged += cbImageEditorUseLegacyImageEditor_CheckedChanged;
+            // 
             // tpAdvanced
             // 
             tpAdvanced.BackColor = System.Drawing.SystemColors.Window;
@@ -2448,6 +2513,13 @@
             tttvMain.TreeViewFont = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 162);
             tttvMain.TreeViewSize = 190;
             tttvMain.TabChanged += tttvMain_TabChanged;
+            // 
+            // cbImageEditorAutoCopyImageToClipboard
+            // 
+            resources.ApplyResources(cbImageEditorAutoCopyImageToClipboard, "cbImageEditorAutoCopyImageToClipboard");
+            cbImageEditorAutoCopyImageToClipboard.Name = "cbImageEditorAutoCopyImageToClipboard";
+            cbImageEditorAutoCopyImageToClipboard.UseVisualStyleBackColor = true;
+            cbImageEditorAutoCopyImageToClipboard.CheckedChanged += cbImageEditorAutoCopyImageToClipboard_CheckedChanged;
             // 
             // TaskSettingsForm
             // 
@@ -2541,9 +2613,13 @@
             tpWatchFolders.ResumeLayout(false);
             tpWatchFolders.PerformLayout();
             tpTools.ResumeLayout(false);
-            tpTools.PerformLayout();
+            tcTools.ResumeLayout(false);
+            tpToolsGeneral.ResumeLayout(false);
+            tpToolsGeneral.PerformLayout();
             pTools.ResumeLayout(false);
             pTools.PerformLayout();
+            tpToolsImageEditor.ResumeLayout(false);
+            tpToolsImageEditor.PerformLayout();
             tpAdvanced.ResumeLayout(false);
             tpAdvanced.PerformLayout();
             ResumeLayout(false);
@@ -2831,5 +2907,13 @@
         private System.Windows.Forms.TextBox txtCustomActionCompletedSoundPath;
         private System.Windows.Forms.CheckBox cbUseCustomActionCompletedSound;
         private System.Windows.Forms.CheckBox cbCaptureAutoHideDesktopIcons;
+        private System.Windows.Forms.CheckBox cbImageEditorUseLegacyImageEditor;
+        private System.Windows.Forms.TabControl tcTools;
+        private System.Windows.Forms.TabPage tpToolsGeneral;
+        private System.Windows.Forms.TabPage tpToolsImageEditor;
+        private System.Windows.Forms.CheckBox cbImageEditorExitConfirmation;
+        private System.Windows.Forms.CheckBox cbImageEditorZoomToFitOnOpen;
+        private System.Windows.Forms.CheckBox cbImageEditorAutoCloseEditorOnTask;
+        private System.Windows.Forms.CheckBox cbImageEditorAutoCopyImageToClipboard;
     }
 }
